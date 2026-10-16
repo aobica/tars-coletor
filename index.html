@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TARS Coletor</title>
+</head>
+<body style="background:#000;color:#0f0;font-family:Consolas,monospace;padding:24px">
+<h1>&gt; TARS ONLINE_</h1>
+<p>Teste do coletor: conexão estabelecida.</p>
+<p id="info"></p>
+<script>
+document.getElementById('info').textContent =
+ 'HTTPS: ' + (location.protocol === 'https:' ? 'OK' : 'NÃO') +
+ ' | Criptografia: ' + ((window.crypto && crypto.subtle) ? 'OK' : 'NÃO');
+</script>
+</body>
+</html>
