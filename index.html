@@ -1,18 +1,631 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="tars">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TARS Coletor</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TARS">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<title>TARS · Coletor</title>
+<style>
+[data-theme=moderno]{--bg:#f3f5fa;--panel:#fff;--panel2:#f8fafc;--border:#e2e8f0;--grid:#edf1f7;--text:#0f172a;--muted:#64748b;--accent:#2563eb;--accent-text:#fff;--pos:#16a34a;--neg:#dc2626;--warn:#d97706;--info:#0891b2;--font:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;--radius:12px;--glow:none;--input:#fff}
+[data-theme=tars]{--bg:#030303;--panel:#001200;--panel2:#001a00;--border:#007a00;--grid:#002a00;--text:#00ff00;--muted:#00b000;--accent:#00ff00;--accent-text:#000;--pos:#00ff00;--neg:#ff3b3b;--warn:#ffff00;--info:#00e5ff;--font:Consolas,Menlo,'Courier New',monospace;--radius:0px;--glow:0 0 6px rgba(0,255,0,.45);--input:#000}
+[data-theme=endurance]{--bg:#060a13;--panel:#0d1524;--panel2:#111c30;--border:#1d2a44;--grid:#16223a;--text:#e6edf7;--muted:#8b9bb8;--accent:#f5a524;--accent-text:#1a1203;--pos:#34d399;--neg:#f87171;--warn:#f5a524;--info:#4cc9f0;--font:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;--radius:10px;--glow:none;--input:#0a1120}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.4;-webkit-tap-highlight-color:transparent;padding-bottom:calc(74px + env(safe-area-inset-bottom));min-height:100vh}
+[data-theme=tars] .big,[data-theme=tars] .logo{text-shadow:var(--glow)}
+.top{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top)) 12px 8px;background:var(--bg);border-bottom:1px solid var(--border)}
+.logo{font-weight:800;font-size:16px;letter-spacing:.04em}
+.logo small{color:var(--muted);font-weight:400;font-size:11px}
+.spacer{flex:1}
+main{padding:12px;max-width:640px;margin:0 auto}
+.bnav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--panel2);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom);z-index:60}
+.bnav button{flex:1;padding:8px 2px 9px;background:none;border:0;color:var(--muted);font-family:var(--font);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
+.bnav button .i{font-size:21px;line-height:1.1}
+.bnav button.on{color:var(--accent);font-weight:700}
+.bnav .n{position:absolute;top:4px;left:56%;background:var(--neg);color:#fff;font-size:10px;font-weight:800;border-radius:10px;padding:0 5px;min-width:16px;text-align:center}
+body.locked .bnav,body.locked #hdrActs{display:none}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.card h3{margin:0 0 10px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.big{font-size:30px;font-weight:800;margin:2px 0}
+.mid{font-size:20px;font-weight:800}
+.muted{color:var(--muted)}.small{font-size:12.5px}.pos{color:var(--pos)}.neg{color:var(--neg)}.warn{color:var(--warn)}.info{color:var(--info)}.center{text-align:center}.right{text-align:right}.nowrap{white-space:nowrap}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{font-family:var(--font);font-size:15px;min-height:44px;padding:10px 14px;border-radius:var(--radius);border:1px solid var(--border);background:var(--panel2);color:var(--text);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-text);font-weight:800}
+.btn.danger{border-color:var(--neg);color:var(--neg);background:transparent}
+.btn.ghost{background:transparent}
+.btn.sm{min-height:34px;padding:6px 10px;font-size:13px}
+.btn.full{width:100%}
+.bigbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:16px 8px;font-size:15px;font-weight:800;border-radius:var(--radius);border:2px solid var(--accent);background:var(--panel);color:var(--accent);cursor:pointer;text-align:center;font-family:var(--font)}
+.bigbtn .i{font-size:30px}
+.bigbtn.alt{border-color:var(--border);color:var(--text)}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);margin-bottom:10px}
+input,select,textarea{font-family:var(--font);font-size:16px;background:var(--input);color:var(--text);border:1px solid var(--border);border-radius:calc(var(--radius) * .6);padding:10px;width:100%;outline:none;-webkit-appearance:none;appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 16px) 55%,calc(100% - 11px) 55%;background-size:5px 5px;background-repeat:no-repeat;padding-right:28px}
+input:focus,select:focus{border-color:var(--accent)}
+input[type=checkbox]{width:22px;height:22px;-webkit-appearance:auto;appearance:auto;accent-color:var(--accent)}
+input.lido,select.lido{border-color:var(--info);box-shadow:0 0 0 2px color-mix(in srgb,var(--info) 30%,transparent)}
+[data-theme=tars] input[type=date]::-webkit-calendar-picker-indicator,[data-theme=endurance] input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1)}
+.seg{display:flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px}
+.seg button{flex:1;border:0;background:transparent;color:var(--muted);padding:11px 6px;font-family:var(--font);font-size:14px}
+.seg button.on{background:var(--accent);color:var(--accent-text);font-weight:800}
+.lst{display:flex;flex-direction:column}
+.it{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--grid)}
+.it:last-child{border-bottom:0}
+.it .d{flex:1;min-width:0}
+.it .t{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it .s{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it .v{font-weight:800;white-space:nowrap;text-align:right}
+.al{padding:9px 11px;border-left:4px solid var(--info);background:var(--panel2);font-size:13.5px;margin-bottom:6px;border-radius:calc(var(--radius) * .5)}
+.al.neg{border-color:var(--neg)}.al.warn{border-color:var(--warn)}.al.pos{border-color:var(--pos)}
+.chip{display:inline-block;font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid currentColor;white-space:nowrap}
+.ico{background:none;border:0;color:var(--muted);font-size:18px;padding:6px 8px;cursor:pointer;font-family:var(--font)}
+.fileinp{position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0}
+.thumb{width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid var(--border)}
+.prog{height:8px;background:var(--grid);border-radius:8px;overflow:hidden;margin-top:6px}
+.prog>i{display:block;height:100%;width:0;background:var(--info);transition:width .3s}
+.empty{text-align:center;padding:26px 10px;color:var(--muted)}
+/* lock / sheets */
+.lock{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:calc(30px + env(safe-area-inset-top)) 14px 30px}
+.lock.hidden,.overlay.hidden{display:none}
+.lock-box{width:100%;max-width:440px}
+.lockhead{text-align:center;margin-bottom:18px}
+.lockhead .lg{font-size:44px;color:var(--accent)}
+.avatar{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;margin:0 auto 6px;background:var(--accent);color:var(--accent-text);font-weight:800;font-size:20px}
+[data-theme=tars] .avatar{background:transparent;color:var(--accent);border:1px solid var(--accent);box-shadow:var(--glow)}
+.perfis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.perfil{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px 8px;color:var(--text);font-family:var(--font);font-size:15px;font-weight:700}
+.overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--panel);border-top:2px solid var(--accent);width:100%;max-width:640px;max-height:88vh;overflow:auto;padding:16px 16px calc(16px + env(safe-area-inset-bottom));border-radius:calc(var(--radius) * 1.4) calc(var(--radius) * 1.4) 0 0}
+.sheet h2{margin:0 0 10px;font-size:17px}
+.acts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.acts .btn{flex:1}
+#toasts{position:fixed;left:12px;right:12px;top:calc(60px + env(safe-area-inset-top));z-index:400;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.toast{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--info);padding:10px 12px;border-radius:var(--radius);box-shadow:0 8px 24px rgba(0,0,0,.35);font-size:14px;max-width:520px;margin:0 auto;width:100%}
+.toast.pos{border-left-color:var(--pos)}.toast.neg{border-left-color:var(--neg)}.toast.warn{border-left-color:var(--warn)}
+.tmsg{font-size:17px;font-weight:700;min-height:48px;line-height:1.5}
+.tmsg .cur{display:inline-block;width:9px;height:17px;background:var(--accent);vertical-align:middle;margin-left:2px;animation:bl 1s step-end infinite}
+@keyframes bl{50%{opacity:0}}
+.shake{animation:shake .35s}@keyframes shake{25%,75%{transform:translateX(-8px)}50%{transform:translateX(8px)}}
+ol.st{padding-left:20px;margin:6px 0;line-height:1.7;font-size:14px}
+</style>
 </head>
-<body style="background:#000;color:#0f0;font-family:Consolas,monospace;padding:24px">
-<h1>&gt; TARS ONLINE_</h1>
-<p>Teste do coletor: conexão estabelecida.</p>
-<p id="info"></p>
+<body class="locked">
+<header class="top">
+  <div class="logo">◢ TARS <small>COLETOR</small></div>
+  <span class="spacer"></span>
+  <div class="row" id="hdrActs"><span class="chip muted" id="userChip"></span><button class="ico" title="Bloquear" onclick="bloquear()">🔒</button></div>
+</header>
+<main id="view"></main>
+<nav class="bnav" id="bnav">
+  <button data-t="painel" onclick="irAba('painel')"><span class="i">📊</span>Painel</button>
+  <button data-t="lancar" onclick="irAba('lancar')"><span class="i">➕</span>Lançar</button>
+  <button data-t="fila" onclick="irAba('fila')"><span class="i">📦</span>Fila<span class="n" id="nFila" style="display:none"></span></button>
+  <button data-t="cfg" onclick="irAba('cfg')"><span class="i">⚙️</span>Ajustes</button>
+</nav>
+<div id="lock" class="lock"><div class="lock-box" id="lockBox"></div></div>
+<div id="sheet" class="overlay hidden"><div class="sheet" id="sheetBox"></div></div>
+<div id="toasts"></div>
+<input type="file" id="fCam" class="fileinp" accept="image/*" capture="environment" onchange="fotoEscolhida(this)">
+<input type="file" id="fGal" class="fileinp" accept="image/*" onchange="fotoEscolhida(this)">
+<input type="file" id="fRes" class="fileinp" onchange="resumoEscolhido(this)">
 <script>
-document.getElementById('info').textContent =
- 'HTTPS: ' + (location.protocol === 'https:' ? 'OK' : 'NÃO') +
- ' | Criptografia: ' + ((window.crypto && crypto.subtle) ? 'OK' : 'NÃO');
+'use strict';
+/* =====================================================================
+   TARS · COLETOR v1.0 — lançamentos no celular para o SYS.FINANCE v4.4+
+   Dados ficam só neste aparelho, criptografados (AES-256-GCM).
+   ===================================================================== */
+const VER = '1.0.0', LS_P = 'tarsc_perfis', LS_D = 'tarsc_data_', LS_T = 'tarsc_tema';
+const KDF_ITER = 310000, BLOQ_MIN = 5, BG_LOCK_S = 60;
+const LIB = { tess: 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js', qr: 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js' };
+
+// ---------- utilidades ----------
+const pad = n => String(n).padStart(2, '0');
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const hoje = () => ymd(new Date());
+const addDias = (s, n) => { const [y, m, d] = s.split('-').map(Number); const x = new Date(y, m - 1, d + n); return ymd(x); };
+const fmtD = s => s ? s.split('-').reverse().join('/') : '';
+const fmtDC = s => s ? `${s.slice(8, 10)}/${s.slice(5, 7)}` : '';
+const r2 = v => Math.round((v + Number.EPSILON) * 100) / 100;
+const brl = v => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v || 0);
+const fmtNum = v => (v === '' || v == null || isNaN(v)) ? '' : Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/\s+/g, ' ').trim();
+const $id = x => document.getElementById(x);
+const sum = (a, f) => a.reduce((s, x) => s + (f ? f(x) : x), 0);
+const novoUid = () => Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+const slug = s => norm(s).replace(/[^A-Z0-9]+/g, '_').replace(/^_|_$/g, '') || 'PERFIL';
+function parseValor(s) {
+  if (typeof s === 'number') return s;
+  s = String(s || '').trim().replace(/R\$|\s|\u00a0/g, ''); if (!s) return NaN;
+  let neg = false; if (s.startsWith('-')) { neg = true; s = s.slice(1); }
+  const lc = s.lastIndexOf(','), ld = s.lastIndexOf('.');
+  if (lc > ld) s = s.replace(/\./g, '').replace(',', '.');
+  else if (ld > lc && lc >= 0) s = s.replace(/,/g, '');
+  else if (lc === -1 && (s.match(/\./g) || []).length > 1) s = s.replace(/\./g, '');
+  const v = parseFloat(s); return isNaN(v) ? NaN : (neg ? -v : v);
+}
+function dataValida(y, m, d) { const x = new Date(y, m - 1, d); return x.getFullYear() === y && x.getMonth() === m - 1 && x.getDate() === d; }
+
+// ---------- criptografia (mesmo padrão do SYS.FINANCE) ----------
+const TE = new TextEncoder(), TD = new TextDecoder();
+function b64e(buf) { const b = new Uint8Array(buf); let s = ''; for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s); }
+function b64d(s) { const bin = atob(s), b = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) b[i] = bin.charCodeAt(i); return b; }
+const rnd = n => crypto.getRandomValues(new Uint8Array(n));
+async function derivar(segredo, salt, iter = KDF_ITER) {
+  const base = await crypto.subtle.importKey('raw', TE.encode(segredo), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: iter, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+}
+async function cifrar(key, bytes) { const iv = rnd(12); const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, bytes); return { iv: b64e(iv), ct: b64e(ct) }; }
+async function decifrar(key, o) { return new Uint8Array(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64d(o.iv) }, key, b64d(o.ct))); }
+
+// ---------- estrutura padrão (se ainda não houver resumo do PC) ----------
+const EST = {
+  despesa: [['MORADIA', ['FINANCIAMENTO', 'SEGURO_HABITACIONAL', 'IPTU', 'MANUTENCAO', 'UTENSILIOS']], ['CONTAS_CASA', ['ENERGIA', 'AGUA', 'GAS_LENHA', 'TELEFONE_INTERNET']], ['ALIMENTACAO', ['MERCADO', 'ACOUGUE_FEIRA', 'RESTAURANTE', 'DELIVERY']], ['VEICULOS', ['COMBUSTIVEL', 'SEGURO', 'IPVA_LICENCIAMENTO', 'MANUTENCAO', 'PEDAGIO', 'ESTACIONAMENTO']], ['CHACARAS', ['MANUTENCAO', 'INSUMOS', 'FERRAMENTAS', 'MAO_DE_OBRA', 'ENERGIA_AGUA', 'ITR_IPTU']], ['PRODUCAO_REVENDA', ['COMPRA_MEL_SOGRA', 'EMBALAGENS', 'INSUMOS_APICULTURA']], ['PETS', ['RACAO', 'VETERINARIO', 'VACINAS_REMEDIOS', 'BANHO_TOSA']], ['SAUDE', ['PLANO_SAUDE', 'FARMACIA', 'CONSULTAS_EXAMES', 'DENTISTA']], ['ASSINATURAS', ['STREAMING', 'MUSICA', 'NUVEM_APPS']], ['LAZER', ['JOGOS_DIGITAIS', 'PASSEIOS', 'VIAGENS']], ['PESSOAL', ['VESTUARIO', 'CUIDADOS_PESSOAIS', 'PRESENTES']], ['FINANCEIRO', ['TARIFAS', 'ANUIDADE', 'JUROS_IOF']], ['IMPOSTOS', ['IRPF', 'OUTROS_IMPOSTOS']], ['OUTROS', []]],
+  receita: [['SALARIO', ['SALARIO', 'FERIAS', 'DECIMO_TERCEIRO', 'PLR']], ['VENDAS_RURAIS', ['MEL_PRODUCAO', 'MEL_REVENDA', 'PINHAO', 'FEIJAO']], ['OUTROS', ['REEMBOLSOS', 'EXTRAS', 'RENDIMENTOS']]]
+};
+const SUB_KW = [
+  ['MORADIA', 'FINANCIAMENTO', /FINAN/], ['MORADIA', 'IPTU', /IPTU/], ['CONTAS_CASA', 'ENERGIA', /ENERGIA|\bLUZ\b|CEEE|RGE|EQUATORIAL/], ['CONTAS_CASA', 'AGUA', /\bAGUA\b|CORSAN|DMAE|SANEAMENTO/],
+  ['CONTAS_CASA', 'TELEFONE_INTERNET', /TELEFON|INTERNET|\bVIVO\b|\bCLARO\b|\bTIM\b|FIBRA/], ['CONTAS_CASA', 'GAS_LENHA', /\bGAS\b|LENHA|BOTIJ/],
+  ['ALIMENTACAO', 'DELIVERY', /IFOOD|DELIVERY|RAPPI/], ['ALIMENTACAO', 'RESTAURANTE', /RESTAUR|LANCHE|PIZZ|CHURRASC|BAR\b/], ['ALIMENTACAO', 'MERCADO', /MERCADO|SUPERMERC|ATACAD|ZAFFARI|ASUN|NACIONAL|BISTEK/], ['ALIMENTACAO', 'ACOUGUE_FEIRA', /ACOUGUE|FEIRA|HORTI|FRUTEIRA/],
+  ['VEICULOS', 'COMBUSTIVEL', /POSTO|COMBUST|GASOLINA|DIESEL|ETANOL|IPIRANGA|SHELL|PETROBRAS|BUFFON/], ['VEICULOS', 'IPVA_LICENCIAMENTO', /IPVA|LICENCIAMENTO|DETRAN/], ['VEICULOS', 'PEDAGIO', /PEDAGIO|SEM PARAR|CONECTCAR|VELOE/], ['VEICULOS', 'ESTACIONAMENTO', /ESTACION/], ['VEICULOS', 'MANUTENCAO', /OFICINA|MECANIC|PNEU|AUTO ?PECAS/],
+  ['PETS', 'RACAO', /RACAO|AGROPEC|PET ?SHOP/], ['PETS', 'VETERINARIO', /VETERIN/], ['PETS', 'BANHO_TOSA', /BANHO|TOSA/],
+  ['SAUDE', 'FARMACIA', /FARMAC|DROGA|PANVEL|RAIA|SAO JOAO/], ['SAUDE', 'DENTISTA', /DENT|ODONT/],
+  ['ASSINATURAS', 'STREAMING', /NETFLIX|PRIME VIDEO|DISNEY|HBO|GLOBOPLAY|PARAMOUNT|YOUTUBE/], ['ASSINATURAS', 'MUSICA', /SPOTIFY|DEEZER/],
+  ['LAZER', 'JOGOS_DIGITAIS', /STEAM|\bPSN\b|PLAYSTATION|XBOX|EPIC GAMES|NINTENDO/],
+  ['CHACARAS', 'INSUMOS', /SEMENTE|ADUBO|AGROPEC|CALCARIO/], ['CHACARAS', 'FERRAMENTAS', /FERRAG|FERRAMENT|MATERIAIS DE CONSTR/],
+  ['VENDAS_RURAIS', 'PINHAO', /PINH/], ['VENDAS_RURAIS', 'FEIJAO', /FEIJ/], ['VENDAS_RURAIS', 'MEL_REVENDA', /MEL/], ['PRODUCAO_REVENDA', 'COMPRA_MEL_SOGRA', /MEL|SOGRA/]
+];
+
+// ---------- estado ----------
+let sessao = null, aba = 'painel', lanc = null, lockUI = { etapa: 'auto' }, resCtx = 'novo', pendRes = null, worker = null, ultimaAtiv = Date.now(), ocultoEm = 0;
+const perfis = () => { try { return JSON.parse(localStorage.getItem(LS_P)) || []; } catch (e) { return []; } };
+const salvarPerfis = l => localStorage.setItem(LS_P, JSON.stringify(l));
+const R = () => sessao && sessao.d.resumo;
+let _grav = Promise.resolve();
+function salvar() {
+  if (!sessao) return; const s = sessao, snap = JSON.stringify(s.d);
+  _grav = _grav.then(async () => localStorage.setItem(LS_D + s.p.id, JSON.stringify(await cifrar(s.key, TE.encode(snap))))).catch(e => { console.error(e); toast('Falha ao gravar no aparelho', 'neg'); });
+}
+const dadosVazios = () => ({ resumo: null, fila: [], enviados: [], ultimo: {}, uso: {}, pacotes: [] });
+
+// ---------- UI base ----------
+function toast(msg, t = 'info') { const el = document.createElement('div'); el.className = 'toast ' + t; el.innerHTML = msg; $id('toasts').appendChild(el); setTimeout(() => el.remove(), 3800); }
+let _sheetRes = null;
+function sheet(titulo, html, botoes) {
+  $id('sheetBox').innerHTML = `<h2>${titulo}</h2>${html}<div class="acts">${botoes.map(([k, l, c]) => `<button class="btn ${c || ''}" data-k="${k}">${l}</button>`).join('')}</div>`;
+  $id('sheet').classList.remove('hidden');
+  return new Promise(res => { _sheetRes = res; $id('sheetBox').querySelectorAll('[data-k]').forEach(b => b.onclick = () => { const x = {}; $id('sheetBox').querySelectorAll('[data-x]').forEach(i => x[i.dataset.x] = i.type === 'checkbox' ? i.checked : i.value); fecharSheet(); res({ k: b.dataset.k, ...x }); }); });
+}
+function fecharSheet() { $id('sheet').classList.add('hidden'); $id('sheetBox').innerHTML = ''; }
+function setTema(t) { document.documentElement.setAttribute('data-theme', t); localStorage.setItem(LS_T, t); }
+function irAba(a) { aba = a; window.scrollTo({ top: 0 }); render(); }
+function carregarScript(src) {
+  return new Promise((ok, err) => {
+    const ex = document.querySelector(`script[data-src="${src}"]`); if (ex) { ex.dataset.ok ? ok() : ex.addEventListener('load', ok); return; }
+    const s = document.createElement('script'); s.src = src; s.dataset.src = src; s.onload = () => { s.dataset.ok = 1; ok(); }; s.onerror = () => { s.remove(); err(new Error('sem internet para carregar ' + src.split('/')[4])); }; document.head.appendChild(s);
+  });
+}
+
+// ---------- listas (do resumo do PC ou padrão) ----------
+function cats(tipo) { const r = R(); return r && r.categorias ? r.categorias[tipo].map(x => x.nome) : EST[tipo].map(x => x[0]); }
+function subs(tipo, cat) { const r = R(); const L = r && r.categorias ? r.categorias[tipo] : EST[tipo].map(([n, s]) => ({ nome: n, subs: s })); return (L.find(x => x.nome === cat) || { subs: [] }).subs || []; }
+function contas(tipo) {
+  const r = R(); if (!r) return [{ k: '', n: '(definir no PC)' }];
+  const L = r.contas.map(c => ({ k: 'b:' + c.id, n: '🏦 ' + c.nome }));
+  if (tipo === 'despesa') (r.cartoes || []).forEach(c => L.push({ k: 'c:' + c.id, n: '💳 ' + c.nome }));
+  return L;
+}
+function nomeConta(k) { const r = R(); if (!r || !k) return '(definir no PC)'; const [t, id] = k.split(':'); const x = t === 'b' ? r.contas.find(c => c.id == id) : (r.cartoes || []).find(c => c.id == id); return x ? (t === 'c' ? '💳 ' : '') + x.nome : '?'; }
+function ordUso(lista, st, key = x => x) {
+  st = st || {}; return [...lista].sort((a, b) => { const A = st[key(a)], B = st[key(b)]; if (A && B) return (B.n - A.n) || String(B.last).localeCompare(String(A.last)); if (A) return -1; if (B) return 1; return 0; });
+}
+function usoInc(chave, k) { const u = sessao.d.uso; u[chave] = u[chave] || {}; const e = u[chave][k] || (u[chave][k] = { n: 0, last: '' }); e.n++; e.last = new Date().toISOString(); }
+function catAuto(desc, tipo) {
+  const d = norm(desc), r = R(), lista = cats(tipo);
+  for (const g of ((r && r.regras) || [])) if (g.palavra && d.includes(norm(g.palavra)) && lista.includes(g.categoria)) return g.categoria;
+  for (const [c, , re] of SUB_KW) if (lista.includes(c) && re.test(d)) return c;
+  return null;
+}
+function subAuto(desc, tipo, cat) { const d = norm(desc), L = subs(tipo, cat); for (const [c, s, re] of SUB_KW) if (c === cat && L.includes(s) && re.test(d)) return s; return ''; }
+
+/* =====================================================================
+   TELA BLOQUEADA / PERFIS
+   ===================================================================== */
+const iniciais = n => String(n || '?').trim().split(/\s+/).map(x => x[0]).slice(0, 2).join('').toUpperCase();
+function renderLock() {
+  const L = perfis(), b = $id('lockBox'); $id('lock').classList.remove('hidden');
+  const head = `<div class="lockhead"><div class="lg">◢</div><div class="mid">TARS · COLETOR</div><div class="small muted">🔒 Dados criptografados neste aparelho</div></div>`;
+  if (!window.crypto || !crypto.subtle) { b.innerHTML = head + `<div class="card">⚠ Este navegador não liberou a criptografia. Abra pelo endereço <b>https://</b> no Safari ou no Chrome.</div>`; return; }
+  let e = lockUI.etapa;
+  if (e === 'auto') e = !L.length ? 'novo' : L.length === 1 ? 'senha' : 'lista';
+  if (e === 'senha' && !lockUI.id && L.length) lockUI.id = L[0].id;
+  if (e === 'novo') {
+    b.innerHTML = head + `<div class="card"><h3>👋 Primeiro acesso</h3>
+      <ol class="st"><li>No PC, abra o SYS.FINANCE e toque em <b>📱 → Gerar resumo</b>, salvando em <b>TARS_Sync › para_celular</b>.</li><li>Aqui, toque no botão abaixo e escolha o arquivo <b>tars_resumo_….json</b> (Procurar → OneDrive).</li><li>Digite a <b>mesma senha</b> do seu perfil no PC.</li></ol>
+      <label for="fRes" class="btn primary full" onclick="resCtx='novo'">📂 Abrir resumo do PC</label>
+      ${pendRes ? `<div style="margin-top:12px"><div class="small">Arquivo: <b>${esc(pendRes.nome)}</b> · perfil <b>${esc(pendRes.o.perfil || '?')}</b></div><label class="f" style="margin-top:8px">Senha do perfil<input type="password" id="lkS" autocomplete="current-password"></label><button class="btn primary full" id="lkBtn" data-enter onclick="lkCriarDeResumo()">🔓 Abrir e criar perfil</button></div>` : ''}
+      <div class="small neg" id="lkErro" style="min-height:18px;margin-top:8px"></div></div>
+      ${L.length ? `<button class="btn ghost full" onclick="lockUI={etapa:'lista'};pendRes=null;renderLock()">◀ Voltar aos perfis</button>` : ''}
+      <button class="btn ghost full" style="margin-top:6px" onclick="lockUI={etapa:'manual'};renderLock()">Criar sem resumo (configuro depois)</button>`;
+  } else if (e === 'manual') {
+    b.innerHTML = head + `<div class="card"><h3>Novo perfil</h3><label class="f">Nome<input id="lkN" maxlength="30"></label><label class="f">Senha (use a mesma do PC)<input type="password" id="lkS1"></label><label class="f">Confirmar senha<input type="password" id="lkS2"></label>
+      <div class="small muted">Sem o resumo, as contas ficam para definir no PC na hora de importar.</div><div class="small neg" id="lkErro" style="min-height:18px;margin-top:8px"></div>
+      <div class="acts"><button class="btn ghost" onclick="lockUI={etapa:'auto'};renderLock()">◀ Voltar</button><button class="btn primary" id="lkBtn" data-enter onclick="lkCriarManual()">Criar</button></div></div>`;
+  } else if (e === 'lista') {
+    b.innerHTML = head + `<div class="perfis">${L.map(p => `<button class="perfil" onclick="lockUI={etapa:'senha',id:'${p.id}'};renderLock()"><div class="avatar">${esc(iniciais(p.apelido || p.nome))}</div>${esc(p.apelido || p.nome)}</button>`).join('')}
+      <button class="perfil" style="border-style:dashed;color:var(--muted)" onclick="lockUI={etapa:'novo'};pendRes=null;renderLock()"><div class="avatar" style="background:transparent;border:2px dashed var(--border);color:var(--muted)">+</div>Novo perfil</button></div>`;
+  } else {
+    const p = L.find(x => x.id === lockUI.id) || L[0];
+    b.innerHTML = head + `<div class="center"><div class="avatar">${esc(iniciais(p.apelido || p.nome))}</div><div class="mid">${esc(p.apelido || p.nome)}</div></div>
+      <div class="card" style="margin-top:12px"><label class="f">Senha<input type="password" id="lkS" autocomplete="current-password"></label>
+      <button class="btn primary full" id="lkBtn" data-enter onclick="lkEntrar('${p.id}')">🔓 Desbloquear</button><div class="small neg" id="lkErro" style="min-height:18px;margin-top:8px"></div></div>
+      <button class="btn ghost full" onclick="lockUI={etapa:'lista'};renderLock()">Trocar perfil</button>`;
+  }
+  setTimeout(() => { const f = b.querySelector('input'); f && f.focus(); }, 60);
+}
+function lkErro(m) { const e = $id('lkErro'); if (e) e.textContent = m; const b = $id('lockBox'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); }
+function lkBtn(t, dis) { const b = $id('lkBtn'); if (b) { b.textContent = t; b.disabled = dis; } }
+async function lerResumoArquivo(o, senha) {
+  if (!o || o.formato !== 'sysfinance-resumo-enc') throw new Error('formato');
+  const key = await derivar(senha, b64d(o.kdf.salt), o.kdf.iter);
+  return JSON.parse(TD.decode(await decifrar(key, o.dados)));
+}
+async function criarPerfilLocal(nome, apelido, extra, senha, d) {
+  const salt = rnd(16), key = await derivar(senha, salt);
+  const p = { id: novoUid(), nome, apelido, trat: extra.trat || 'o', humor: extra.humor ?? 80, kdf: { salt: b64e(salt), iter: KDF_ITER }, criadoEm: Date.now() };
+  localStorage.setItem(LS_D + p.id, JSON.stringify(await cifrar(key, TE.encode(JSON.stringify(d)))));
+  salvarPerfis([...perfis(), p]); return { p, key };
+}
+async function lkCriarDeResumo() {
+  const senha = $id('lkS').value; if (!senha) return lkErro('Digite a senha.');
+  lkBtn('⏳ Abrindo...', true);
+  let r; try { r = await lerResumoArquivo(pendRes.o, senha); } catch (e) { lkBtn('🔓 Abrir e criar perfil', false); return lkErro('Senha incorreta para este resumo.'); }
+  const pf = r.perfil || {}, nome = pf.nome || pendRes.o.perfil || 'PERFIL';
+  if (perfis().some(p => norm(p.apelido || p.nome) === norm(pf.apelido || nome))) { lkBtn('🔓 Abrir e criar perfil', false); return lkErro('Este perfil já existe aqui: entre nele e use "Atualizar resumo".'); }
+  const d = dadosVazios(); d.resumo = r; d.ultimo = r.ultimo || {};
+  const { p, key } = await criarPerfilLocal(nome, pf.apelido || '', pf, senha, d);
+  pendRes = null; iniciarSessao(p, key, senha, d);
+}
+async function lkCriarManual() {
+  const n = $id('lkN').value.trim(), s1 = $id('lkS1').value, s2 = $id('lkS2').value;
+  if (!n) return lkErro('Informe o nome.'); if (s1.length < 6) return lkErro('Senha com no mínimo 6 caracteres.'); if (s1 !== s2) return lkErro('As senhas não conferem.');
+  lkBtn('⏳ Criando...', true); const d = dadosVazios(); const { p, key } = await criarPerfilLocal(n, '', {}, s1, d); iniciarSessao(p, key, s1, d);
+}
+let erros = 0, esperaAte = 0;
+async function lkEntrar(id) {
+  const p = perfis().find(x => x.id === id); if (!p) return;
+  if (Date.now() < esperaAte) return lkErro(`Muitas tentativas. Aguarde ${Math.ceil((esperaAte - Date.now()) / 1000)} s.`);
+  const senha = $id('lkS').value; if (!senha) return lkErro('Digite a senha.');
+  lkBtn('⏳ Verificando...', true);
+  try {
+    const key = await derivar(senha, b64d(p.kdf.salt), p.kdf.iter), raw = localStorage.getItem(LS_D + p.id);
+    const d = raw ? { ...dadosVazios(), ...JSON.parse(TD.decode(await decifrar(key, JSON.parse(raw)))) } : dadosVazios();
+    erros = 0; iniciarSessao(p, key, senha, d);
+  } catch (e) { if (++erros >= 5) { erros = 0; esperaAte = Date.now() + 30000; } lkBtn('🔓 Desbloquear', false); lkErro('Senha incorreta.'); }
+}
+function iniciarSessao(p, key, senha, d) {
+  sessao = { p, key, senha, d }; aba = 'painel'; lanc = null; lockUI = { etapa: 'auto' };
+  $id('lock').classList.add('hidden'); document.body.classList.remove('locked'); ultimaAtiv = Date.now();
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+  salvar(); render(); boasVindas();
+}
+async function bloquear(msg) {
+  if (!sessao) return; await _grav;
+  sessao = null; lanc = null; fecharSheet(); if (worker) { try { worker.terminate(); } catch (e) {} worker = null; }
+  document.body.classList.add('locked'); $id('view').innerHTML = ''; lockUI = { etapa: 'auto' }; renderLock();
+  if (msg) toast(msg, 'info');
+}
+
+/* =====================================================================
+   RESUMO DO PC
+   ===================================================================== */
+async function resumoEscolhido(inp) {
+  const f = inp.files && inp.files[0]; inp.value = ''; if (!f) return;
+  let o; try { o = JSON.parse(await f.text()); } catch (e) { return toast('Arquivo inválido', 'neg'); }
+  if (o.formato !== 'sysfinance-resumo-enc') return toast(o.formato === 'sysfinance-pacote-enc' ? 'Este é um pacote do celular. Escolha o <b>tars_resumo_….json</b> da pasta para_celular.' : 'Este arquivo não é um resumo do SYS.FINANCE.', 'neg');
+  if (!sessao) { pendRes = { nome: f.name, o }; lockUI = { etapa: 'novo' }; renderLock(); return; }
+  let r, senha = sessao.senha;
+  try { r = await lerResumoArquivo(o, senha); }
+  catch (e) {
+    const x = await sheet('🔐 Senha do resumo', `<div class="small">A senha do resumo é diferente da senha deste coletor (talvez você tenha trocado a senha no PC). Digite a senha atual do PC: o coletor passa a usar a mesma.</div><label class="f" style="margin-top:10px">Senha do PC<input type="password" data-x="s"></label>`, [['x', 'Cancelar', 'ghost'], ['ok', 'Abrir', 'primary']]);
+    if (x.k !== 'ok') return;
+    try { r = await lerResumoArquivo(o, x.s || ''); senha = x.s; } catch (e2) { return toast('Senha incorreta', 'neg'); }
+    const salt = rnd(16); sessao.key = await derivar(senha, salt); sessao.senha = senha;
+    sessao.p.kdf = { salt: b64e(salt), iter: KDF_ITER }; salvarPerfis(perfis().map(p => p.id === sessao.p.id ? sessao.p : p));
+  }
+  const ant = sessao.d.resumo; sessao.d.resumo = r;
+  if (r.perfil) Object.assign(sessao.p, { humor: r.perfil.humor ?? sessao.p.humor, trat: r.perfil.trat || sessao.p.trat, apelido: r.perfil.apelido || sessao.p.apelido }); salvarPerfis(perfis().map(p => p.id === sessao.p.id ? sessao.p : p));
+  sessao.d.enviados = sessao.d.enviados.filter(i => !i.enviadoEm || i.enviadoEm > Date.parse(r.geradoEm) - 864e5 * 30);
+  salvar(); lanc = null; render();
+  toast(`📂 Resumo de ${new Date(r.geradoEm).toLocaleString('pt-BR').slice(0, 17)} carregado${ant ? ' (substituiu o anterior)' : ''}.`, 'pos');
+}
+const idadeResumoH = r => (Date.now() - Date.parse(r.geradoEm)) / 36e5;
+
+/* =====================================================================
+   RENDER
+   ===================================================================== */
+function render() {
+  if (!sessao) { document.body.classList.add('locked'); renderLock(); return; }
+  $id('userChip').textContent = '👤 ' + (sessao.p.apelido || sessao.p.nome);
+  document.querySelectorAll('#bnav button').forEach(b => b.classList.toggle('on', b.dataset.t === aba));
+  const n = sessao.d.fila.length, nb = $id('nFila'); nb.style.display = n ? '' : 'none'; nb.textContent = n;
+  $id('view').innerHTML = { painel: vPainel, lancar: vLancar, fila: vFila, cfg: vCfg }[aba]();
+  if (aba === 'lancar') posLancar();
+}
+function efeitoFila() {
+  const ef = {}; sessao.d.fila.forEach(i => { if (!i.conta || !i.conta.startsWith('b:') || !i.efetivado) return; const id = i.conta.slice(2); ef[id] = (ef[id] || 0) + (i.tipo === 'receita' ? i.valor : -i.valor); });
+  return ef;
+}
+function vPainel() {
+  const r = R();
+  if (!r) return `<div class="card empty"><div class="big">📂</div><p>Abra o <b>resumo gerado no PC</b> para ver saldos, contas a pagar e alertas.</p><label for="fRes" class="btn primary" onclick="resCtx='upd'">📂 Abrir resumo</label></div>
+    <button class="bigbtn full" style="width:100%" onclick="irAba('lancar')"><span class="i">➕</span>Lançar mesmo assim</button>`;
+  const h = hoje(), idade = idadeResumoH(r), ef = efeitoFila(), efTot = r2(sum(Object.values(ef)));
+  const venc = r.pendencias.filter(p => p.data < h), prox = r.pendencias.filter(p => p.data >= h && p.data <= addDias(h, 7)), depois = r.pendencias.filter(p => p.data > addDias(h, 7));
+  const itP = p => `<div class="it"><div class="small nowrap" style="width:44px">${fmtDC(p.data)}</div><div class="d"><div class="t">${esc(p.descricao)}</div><div class="s">${esc(p.conta)}${p.categoria ? ' · ' + esc(p.categoria) : ''}</div></div><div class="v ${p.tipo === 'receita' ? 'pos' : 'neg'}">${p.tipo === 'receita' ? '+' : '−'}${brl(p.valor)}</div></div>`;
+  return `
+  ${idade > 72 ? `<div class="al warn">⚠ Resumo com ${Math.floor(idade / 24)} dias. Gere um novo no PC para atualizar os saldos.</div>` : ''}
+  <div class="card"><h3>Saldo atual em contas <span class="chip">${new Date(r.geradoEm).toLocaleString('pt-BR').slice(0, 17)}</span></h3>
+    <div class="big ${r.saldoAtual < 0 ? 'neg' : ''}">${brl(r.saldoAtual)}</div>
+    ${efTot ? `<div class="small">Lançado no celular (não enviado): <b class="${efTot < 0 ? 'neg' : 'pos'}">${efTot > 0 ? '+' : ''}${brl(efTot)}</b> → estimado <b>${brl(r.saldoAtual + efTot)}</b></div>` : ''}
+    <div class="g2" style="margin-top:10px"><div><div class="small muted">Projetado fim do mês</div><div class="mid ${r.saldoProjetadoFimMes < 0 ? 'neg' : 'info'}">${brl(r.saldoProjetadoFimMes)}</div></div>
+    <div><div class="small muted">Mês: receitas / despesas</div><div class="small"><span class="pos">${brl(r.mes.receitas)}</span><br><span class="neg">${brl(r.mes.despesas)}</span></div></div></div></div>
+  <div class="card"><h3>🚨 Alertas</h3>
+    ${r.alertas.map(a => `<div class="al ${a.st === 'neg' ? 'neg' : 'warn'}">${a.st === 'neg' ? '🔴' : '🟡'} <b>${esc(a.conta)}</b> ${a.st === 'neg' ? 'fica negativa' : 'fica abaixo do limite'} em <b>${fmtDC(a.data)}</b> · menor saldo ${brl(a.min)}</div>`).join('')}
+    ${venc.length ? `<div class="al neg">⚠ <b>${venc.length}</b> conta(s) vencida(s) aguardando confirmação: ${brl(sum(venc, p => p.valor))}</div>` : ''}
+    ${!r.alertas.length && !venc.length ? '<div class="al pos">✓ Nenhum alerta de saldo nos próximos 30 dias.</div>' : ''}</div>
+  ${venc.length || prox.length || depois.length ? `<div class="card"><h3>Contas a pagar / receber</h3>
+    ${venc.length ? `<div class="small neg" style="margin-top:4px">VENCIDAS</div><div class="lst">${venc.map(itP).join('')}</div>` : ''}
+    ${prox.length ? `<div class="small warn" style="margin-top:8px">PRÓXIMOS 7 DIAS</div><div class="lst">${prox.map(itP).join('')}</div>` : ''}
+    ${depois.length ? `<div class="small muted" style="margin-top:8px">ATÉ 30 DIAS</div><div class="lst">${depois.map(itP).join('')}</div>` : ''}</div>` : ''}
+  <div class="card"><h3>Contas</h3><div class="lst">${r.contas.map(c => { const e = ef[c.id] || 0, s = r2(c.saldo + e); return `<div class="it"><div style="width:6px;align-self:stretch;background:${esc(c.cor || 'var(--accent)')};border-radius:3px"></div><div class="d"><div class="t">${esc(c.nome)}</div>${e ? `<div class="s">resumo ${brl(c.saldo)} · celular ${e > 0 ? '+' : ''}${brl(e)}</div>` : ''}</div><div class="v ${s < 0 ? 'neg' : s < (c.minimo || 0) ? 'warn' : ''}">${brl(s)}</div></div>`; }).join('')}</div></div>
+  ${(r.cartoes || []).length ? `<div class="card"><h3>Cartões</h3><div class="lst">${r.cartoes.map(c => `<div class="it"><div class="d"><div class="t">💳 ${esc(c.nome)}</div><div class="s">fatura vence ${fmtDC(c.venc)} · disponível ${brl(c.disponivel)}</div></div><div class="v warn">${brl(c.faturaAtual)}</div></div>`).join('')}</div></div>` : ''}
+  <label for="fRes" class="btn full" onclick="resCtx='upd'">📂 Atualizar resumo do PC</label>`;
+}
+
+/* =====================================================================
+   LANÇAR (manual e por foto)
+   ===================================================================== */
+function novoForm(tipo = 'despesa') {
+  const m = sessao.d.ultimo[tipo] || {}, cl = cats(tipo), ks = contas(tipo).map(x => x.k);
+  const cat = cl.includes(m.cat) ? m.cat : (cl.includes('OUTROS') ? 'OUTROS' : cl[0]);
+  return { uid: null, tipo, valor: '', data: hoje(), descricao: '', categoria: cat, sub: subs(tipo, cat).includes(m.sub) ? m.sub : '', conta: ks.includes(m.conta) ? m.conta : ks[0], efetivado: true, origem: 'manual', lido: {}, nfce: null, foto: null };
+}
+function vLancar() {
+  if (!lanc) lanc = novoForm();
+  const f = lanc, cl = ordUso(cats(f.tipo), sessao.d.uso['cat_' + f.tipo]), sl = ordUso(subs(f.tipo, f.categoria), sessao.d.uso['sub_' + f.tipo + '_' + f.categoria]);
+  const ct = ordUso(contas(f.tipo), sessao.d.uso['conta_' + f.tipo], x => x.k), cartao = f.conta && f.conta.startsWith('c:');
+  const L = k => f.lido[k] ? 'lido' : '';
+  return `
+  ${f.uid ? `<div class="al info">✎ Editando lançamento da fila <button class="btn sm ghost" onclick="lanc=null;render()">Cancelar edição</button></div>` : `
+  <div class="g2" style="margin-bottom:12px"><label for="fCam" class="bigbtn"><span class="i">📷</span>Foto do cupom</label><label for="fGal" class="bigbtn alt"><span class="i">🖼</span>Da galeria</label></div>`}
+  <div id="ocr"></div>
+  <div class="card">
+    <div class="seg">${[['despesa', '⬇ Despesa'], ['receita', '⬆ Receita']].map(([k, l]) => `<button class="${f.tipo === k ? 'on' : ''}" onclick="trocarTipo('${k}')">${l}</button>`).join('')}</div>
+    <div class="g2"><label class="f">Valor (R$)<input id="iValor" class="${L('valor')}" inputmode="decimal" placeholder="0,00" value="${f.valor !== '' ? esc(fmtNum(f.valor)) : ''}" oninput="lanc.valor=parseValor(this.value);lanc.lido.valor=0"></label>
+      <label class="f">Data<input type="date" id="iData" class="${L('data')}" value="${f.data}" onchange="lanc.data=this.value;if(!lanc.efetTocado){lanc.efetivado=this.value<=hoje();$id('iEf').checked=lanc.efetivado}"></label></div>
+    <label class="f">Descrição<input id="iDesc" class="${L('desc')}" maxlength="120" value="${esc(f.descricao)}" placeholder="Ex.: Mercado, posto, ração..." oninput="lanc.descricao=this.value" onchange="sugerirCat()"></label>
+    <label class="f">Categoria<select id="iCat" class="${L('cat')}" onchange="lanc.categoria=this.value;lanc.sub=subAuto(lanc.descricao,lanc.tipo,this.value);render()">${cl.map(c => `<option ${c === f.categoria ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select></label>
+    ${sl.length ? `<label class="f">Subcategoria<select onchange="lanc.sub=this.value"><option value="">(sem subcategoria)</option>${sl.map(s => `<option ${s === f.sub ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select></label>` : ''}
+    <label class="f">Conta / cartão<select onchange="lanc.conta=this.value;render()">${ct.map(c => `<option value="${c.k}" ${c.k === f.conta ? 'selected' : ''}>${esc(c.n)}</option>`).join('')}</select></label>
+    <label class="row small" style="margin:4px 0 12px;${cartao ? 'display:none' : ''}"><input type="checkbox" id="iEf" ${f.efetivado ? 'checked' : ''} onchange="lanc.efetivado=this.checked;lanc.efetTocado=true"> Já pago / recebido (efetivado)</label>
+    ${f.nfce ? `<div class="small muted" style="margin-bottom:10px">🧾 NFC-e lida pelo QR Code${f.nfce.cnpj ? ' · CNPJ ' + esc(f.nfce.cnpj) : ''} · <a class="info" href="${esc(f.nfce.url)}" target="_blank" rel="noopener">ver nota na SEFAZ</a></div>` : ''}
+    <button class="btn primary full" onclick="salvarLanc()">${f.uid ? '💾 Salvar alteração' : '➕ Colocar na fila'}</button>
+    ${!f.uid ? `<button class="btn ghost full" style="margin-top:6px" onclick="lanc=novoForm(lanc.tipo);render()">Limpar</button>` : ''}
+  </div>`;
+}
+function posLancar() { if (lanc && lanc._st) mostrarOcr(lanc._st); }
+function trocarTipo(t) { const v = lanc.valor, d = lanc.data, ds = lanc.descricao, lido = lanc.lido, n = lanc.nfce; lanc = novoForm(t); Object.assign(lanc, { valor: v, data: d, descricao: ds, lido, nfce: n }); sugerirCat(true); render(); }
+function sugerirCat(silencioso) {
+  const c = catAuto(lanc.descricao, lanc.tipo);
+  if (c && c !== lanc.categoria) { lanc.categoria = c; lanc.sub = subAuto(lanc.descricao, lanc.tipo, c); lanc.lido.cat = 1; if (!silencioso) { render(); toast(`🏷 Categoria sugerida: <b>${esc(c)}</b>`, 'info'); } }
+  else if (c) { const s = subAuto(lanc.descricao, lanc.tipo, c); if (s && !lanc.sub) { lanc.sub = s; if (!silencioso) render(); } }
+}
+function salvarLanc() {
+  const f = lanc, v = parseValor($id('iValor').value), desc = $id('iDesc').value.trim();
+  if (!(v > 0)) return toast('Informe um valor maior que zero', 'neg');
+  if (!f.data) return toast('Informe a data', 'neg');
+  if (!desc) return toast('Informe a descrição', 'neg');
+  const it = { uid: f.uid || novoUid(), data: f.data, tipo: f.tipo, valor: r2(v), descricao: desc.toUpperCase(), categoria: f.categoria, sub: f.sub || '', conta: f.conta || '', efetivado: f.conta && f.conta.startsWith('c:') ? true : !!f.efetivado, origem: f.origem, criadoEm: Date.now() };
+  const fila = sessao.d.fila, i = fila.findIndex(x => x.uid === it.uid);
+  if (i >= 0) fila[i] = it; else fila.push(it);
+  if (!f.uid) { usoInc('cat_' + it.tipo, it.categoria); if (it.sub) usoInc('sub_' + it.tipo + '_' + it.categoria, it.sub); if (it.conta) usoInc('conta_' + it.tipo, it.conta); sessao.d.ultimo[it.tipo] = { cat: it.categoria, sub: it.sub, conta: it.conta }; }
+  if (f.foto) URL.revokeObjectURL(f.foto);
+  salvar(); const ed = !!f.uid; lanc = null;
+  if (ed) { aba = 'fila'; toast('Lançamento atualizado', 'pos'); } else toast(`✓ Na fila: ${esc(it.descricao)} ${brl(it.valor)} (${fila.length} para enviar)`, 'pos');
+  render();
+}
+
+/* ---------- foto do cupom: QR Code da NFC-e + OCR ---------- */
+function mostrarOcr(st) {
+  const el = $id('ocr'); if (!el) return;
+  el.innerHTML = `<div class="card"><div class="row" style="flex-wrap:nowrap">${lanc && lanc.foto ? `<img class="thumb" src="${lanc.foto}" alt="">` : ''}<div style="flex:1"><div class="small"><b>${st.t}</b></div>${st.p != null ? `<div class="prog"><i style="width:${Math.round(st.p * 100)}%"></i></div>` : ''}${st.m ? `<div class="small muted" style="margin-top:4px">${st.m}</div>` : ''}</div></div></div>`;
+}
+function setSt(st) { if (lanc) lanc._st = st; mostrarOcr(st); }
+async function fotoEscolhida(inp) {
+  const file = inp.files && inp.files[0]; inp.value = ''; if (!file || !sessao) return;
+  if (!lanc || lanc.uid) lanc = novoForm(lanc && !lanc.uid ? lanc.tipo : 'despesa');
+  if (lanc.foto) URL.revokeObjectURL(lanc.foto);
+  lanc.foto = URL.createObjectURL(file); lanc.origem = 'foto'; lanc.lido = {}; lanc.nfce = null;
+  aba = 'lancar'; render(); setSt({ t: '📷 Preparando a imagem...', p: 0.02 });
+  try {
+    const cv = await prepararImagem(file);
+    // 1) QR Code da NFC-e (quando houver)
+    try { setSt({ t: '🔎 Procurando QR Code da nota...', p: 0.05 }); await carregarScript(LIB.qr); const ctx = cv.getContext('2d'); const q = jsQR(ctx.getImageData(0, 0, cv.width, cv.height).data, cv.width, cv.height); if (q && q.data) lanc.nfce = parseNFCe(q.data); } catch (e) { console.warn(e); }
+    // 2) OCR do cupom
+    realcar(cv);
+    setSt({ t: '🧠 Carregando leitor de texto...', p: 0.08, m: 'Na primeira vez baixa alguns MB: use Wi-Fi se puder.' });
+    await carregarScript(LIB.tess);
+    if (!worker) worker = await Tesseract.createWorker('por', 1, { logger: m => { if (m.status === 'recognizing text') setSt({ t: '🧠 Lendo o cupom...', p: 0.1 + m.progress * 0.88 }); } });
+    const res = await worker.recognize(cv);
+    aplicarLeitura(parseCupom(res.data.text || ''));
+  } catch (e) {
+    console.error(e);
+    if (lanc && lanc.nfce) aplicarLeitura({});
+    else setSt({ t: '⚠ Não consegui ler a foto', m: esc(e.message || '') + '<br>Preencha os campos manualmente.' });
+  }
+}
+async function prepararImagem(file) {
+  let img;
+  if (window.createImageBitmap) { try { img = await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch (e) { img = null; } }
+  if (!img) img = await new Promise((ok, er) => { const i = new Image(); i.onload = () => ok(i); i.onerror = er; i.src = lanc.foto; });
+  const W = img.width, H = img.height, k = Math.min(1, 1800 / Math.max(W, H));
+  const cv = document.createElement('canvas'); cv.width = Math.round(W * k); cv.height = Math.round(H * k);
+  cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height); return cv;
+}
+/** Tons de cinza + contraste: melhora a leitura de cupom térmico */
+function realcar(cv) {
+  const ctx = cv.getContext('2d'), d = ctx.getImageData(0, 0, cv.width, cv.height), a = d.data;
+  let mn = 255, mx = 0; for (let i = 0; i < a.length; i += 4) { const g = 0.299 * a[i] + 0.587 * a[i + 1] + 0.114 * a[i + 2]; a[i] = g; if (g < mn) mn = g; if (g > mx) mx = g; }
+  const rng = Math.max(1, mx - mn); for (let i = 0; i < a.length; i += 4) { let g = (a[i] - mn) * 255 / rng; g = g < 128 ? g * 0.75 : Math.min(255, g * 1.1); a[i] = a[i + 1] = a[i + 2] = g; }
+  ctx.putImageData(d, 0, 0);
+}
+/** QR Code NFC-e: chave de acesso (CNPJ, mês) e, em contingência offline, dia e valor */
+function parseNFCe(txt) {
+  const m = String(txt).match(/[?&]p=([^&\s]+)/i); if (!m) return null;
+  const p = decodeURIComponent(m[1]).split('|'), ch = (p[0] || '').replace(/\D/g, ''); if (ch.length !== 44) return null;
+  const out = { url: String(txt).trim(), chave: ch, cnpj: ch.substr(6, 14).replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5') };
+  const aa = +ch.substr(2, 2), mm = +ch.substr(4, 2);
+  if (p.length >= 7 && /^\d{1,2}$/.test(p[3]) && !isNaN(parseFloat(p[4]))) { const dd = +p[3]; if (dataValida(2000 + aa, mm, dd)) out.data = `${2000 + aa}-${pad(mm)}-${pad(dd)}`; out.valor = parseFloat(p[4]); }
+  return out;
+}
+/** Interpreta o texto do cupom: total, data e estabelecimento */
+function parseCupom(txt) {
+  const linhas = String(txt).split(/\r?\n/).map(l => l.replace(/\s+/g, ' ').trim()).filter(Boolean), up = linhas.map(norm);
+  const moneyRe = /(\d{1,3}(?:[.\s]\d{3})*[.,]\s?\d{2})(?!\d)/g, pegar = s => { const m = [...s.matchAll(moneyRe)].map(x => parseValor(x[1].replace(/\s/g, ''))).filter(v => v > 0 && v < 100000); return m.length ? m[m.length - 1] : null; };
+  let valor = null, conf = 0;
+  const prior = [[/VALOR\s*(A\s*)?PAGAR|VALOR\s*PAGO/, 3], [/VALOR\s*TOTAL|TOTAL\s*(R\$|A\s*PAGAR|GERAL)/, 2], [/^TOTAL\b|\bTOTAL\b(?!.*ITENS)/, 1]];
+  for (const [re, c] of prior) { for (let i = 0; i < up.length && valor == null; i++) { if (re.test(up[i]) && !/SUB\s*TOTAL|QTD|ITENS|TRIBUT|DESCONTO|TROCO/.test(up[i])) { const v = pegar(up[i]) ?? (up[i + 1] ? pegar(up[i + 1]) : null); if (v) { valor = v; conf = c; } } } if (valor != null) break; }
+  if (valor == null) { const todos = up.flatMap(l => /CNPJ|CPF|CHAVE|PROTOCOLO|TEL/.test(l) ? [] : [...l.matchAll(moneyRe)].map(x => parseValor(x[1].replace(/\s/g, '')))).filter(v => v > 0 && v < 100000); if (todos.length) { valor = Math.max(...todos); conf = 0; } }
+  let data = null; const h = hoje(), min = addDias(h, -730);
+  for (const l of up) { const m = l.match(/(\d{2})[\/.\-](\d{2})[\/.\-](\d{4}|\d{2})/); if (m) { let y = +m[3]; if (y < 100) y += 2000; const ds = `${y}-${m[2]}-${m[1]}`; if (dataValida(y, +m[2], +m[1]) && ds <= addDias(h, 1) && ds >= min) { data = ds; break; } } }
+  let estab = null;
+  for (const l of linhas.slice(0, 6)) { const n = norm(l); if (n.replace(/[^A-Z]/g, '').length >= 4 && !/CNPJ|CPF|\bIE\b|INSCR|RUA|\bAV\b|AVENIDA|DOCUMENTO|NFC|CUPOM|DANFE|FONE|TEL|CEP|EXTRATO|SAT|CONSUMIDOR/.test(n)) { estab = n.replace(/[^A-Z0-9 &.\-]/g, '').replace(/\s+/g, ' ').trim().slice(0, 60); break; } }
+  const cnpj = (txt.match(/\d{2}\.?\d{3}\.?\d{3}\/?\d{4}-?\d{2}/) || [])[0] || null;
+  return { valor, conf, data, estab, cnpj };
+}
+function aplicarLeitura(p) {
+  const f = lanc, n = f.nfce || {}, achou = [], falta = [];
+  const valor = n.valor ?? p.valor, data = n.data || p.data;
+  if (valor) { f.valor = r2(valor); f.lido.valor = 1; achou.push('total ' + brl(valor) + (n.valor ? ' (QR Code)' : p.conf < 1 ? ' (confira!)' : '')); } else falta.push('total');
+  if (data) { f.data = data; f.lido.data = 1; f.efetivado = data <= hoje(); achou.push('data ' + fmtD(data)); } else falta.push('data');
+  if (p.estab && !f.descricao) { f.descricao = p.estab; f.lido.desc = 1; achou.push('estabelecimento'); } else if (!p.estab) falta.push('estabelecimento');
+  sugerirCat(true);
+  render();
+  setSt({ t: achou.length ? '✨ Leitura concluída: confira os campos destacados' : '⚠ Não encontrei os dados no cupom', m: (achou.length ? 'Lido: ' + achou.join(' · ') : '') + (falta.length ? `<br>Preencha: ${falta.join(', ')}` : '') + '<br>A foto não é guardada: só os dados.' });
+}
+
+/* =====================================================================
+   FILA E PACOTE
+   ===================================================================== */
+function vFila() {
+  const L = sessao.d.fila, env = sessao.d.enviados;
+  const tot = t => sum(L.filter(i => i.tipo === t), i => i.valor);
+  return `<div class="card"><h3>📦 Para enviar ao PC <span class="chip">${L.length}</span></h3>
+    ${L.length ? `<div class="lst">${[...L].sort((a, b) => b.data.localeCompare(a.data)).map(i => `<div class="it"><div class="small nowrap" style="width:44px">${fmtDC(i.data)}</div><div class="d"><div class="t">${i.origem === 'foto' ? '📷' : '✍'} ${esc(i.descricao)}</div><div class="s">${esc(i.categoria)}${i.sub ? ' › ' + esc(i.sub) : ''} · ${esc(nomeConta(i.conta))}${i.efetivado ? '' : ' · previsto'}</div></div><div class="v ${i.tipo === 'receita' ? 'pos' : 'neg'}">${i.tipo === 'receita' ? '+' : '−'}${brl(i.valor)}</div><button class="ico" onclick="editar('${i.uid}')">✎</button><button class="ico" onclick="excluir('${i.uid}')">🗑</button></div>`).join('')}</div>
+      <div class="small muted" style="margin:8px 0">Despesas ${brl(tot('despesa'))} · Receitas ${brl(tot('receita'))}</div>
+      <button class="btn primary full" onclick="enviarPacote(false)">📦 Enviar pacote (${L.length})</button>`
+    : '<div class="empty">Nada na fila. Lance pelo ➕ e envie quando quiser.</div>'}</div>
+    <div class="card"><h3>Já enviados <span class="chip">${env.length}</span></h3>
+      <div class="small muted">${env.length ? `Último envio: ${new Date(Math.max(...env.map(i => i.enviadoEm || 0))).toLocaleString('pt-BR').slice(0, 17)}. O PC ignora lançamentos repetidos, então reenviar é seguro.` : 'Nenhum envio ainda.'}</div>
+      ${env.length ? `<div class="acts"><button class="btn" onclick="enviarPacote(true)">↻ Reenviar</button><button class="btn danger" onclick="limparEnviados()">🗑 Limpar histórico</button></div>` : ''}</div>
+    <div class="card"><h3>Como enviar</h3><ol class="st"><li>Toque em <b>📦 Enviar pacote</b> → <b>Salvar em Arquivos</b>.</li><li>Escolha <b>OneDrive › _Terminal_Financeiro_ › TARS_Sync › do_celular</b> → Salvar.</li><li>No PC: <b>📱 → Importar pacote</b>, revise e confirme.</li></ol></div>`;
+}
+function editar(u) { const i = sessao.d.fila.find(x => x.uid === u); if (!i) return; lanc = { ...novoForm(i.tipo), ...i, lido: {}, efetTocado: true }; aba = 'lancar'; render(); }
+async function excluir(u) { const i = sessao.d.fila.find(x => x.uid === u); const r = await sheet('Excluir da fila', `Excluir <b>${esc(i.descricao)}</b> de ${brl(i.valor)}?`, [['x', 'Cancelar', 'ghost'], ['ok', 'Excluir', 'danger']]); if (r.k !== 'ok') return; sessao.d.fila = sessao.d.fila.filter(x => x.uid !== u); salvar(); render(); }
+async function limparEnviados() { const r = await sheet('Limpar histórico', 'Os lançamentos já enviados saem do celular (continuam no PC, se você importou).', [['x', 'Cancelar', 'ghost'], ['ok', 'Limpar', 'danger']]); if (r.k !== 'ok') return; sessao.d.enviados = []; salvar(); render(); }
+async function enviarPacote(reenviar) {
+  const itens = reenviar ? sessao.d.enviados.slice(-200) : sessao.d.fila; if (!itens.length) return;
+  const salt = rnd(16), key = await derivar(sessao.senha, salt), id = novoUid(), agora = new Date();
+  const dados = { dispositivo: navigator.userAgent.includes('iPhone') ? 'iPhone' : navigator.userAgent.includes('Android') ? 'Android' : 'navegador', coletor: VER, itens: itens.map(({ uid, data, tipo, valor, descricao, categoria, sub, conta, efetivado, origem }) => ({ uid, data, tipo, valor, descricao, categoria, sub, conta, efetivado, origem })) };
+  const pac = { formato: 'sysfinance-pacote-enc', versao: '1.0', pacoteId: id, perfil: sessao.p.apelido || sessao.p.nome, criadoEm: agora.toISOString(), qtd: itens.length, kdf: { salt: b64e(salt), iter: KDF_ITER }, dados: await cifrar(key, TE.encode(JSON.stringify(dados))) };
+  const nome = `tars_pacote_${slug(sessao.p.apelido || sessao.p.nome)}_${ymd(agora).replace(/-/g, '')}_${pad(agora.getHours())}${pad(agora.getMinutes())}.json`;
+  const file = new File([JSON.stringify(pac)], nome, { type: 'application/json' });
+  let via = 'download';
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: 'Pacote TARS' }); via = 'share'; }
+    catch (e) { if (e.name === 'AbortError') return; console.warn(e); }
+  }
+  if (via === 'download') { const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = nome; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
+  if (reenviar) { toast('↻ Pacote de reenvio gerado', 'pos'); return; }
+  const r = await sheet('📦 Pacote gerado', `${itens.length} lançamento(s) em <b>${esc(nome)}</b>.<br><br>${via === 'download' ? 'O arquivo foi para <b>Downloads</b>. No app Arquivos, mova para <b>OneDrive › … › TARS_Sync › do_celular</b>.' : 'Confirme que salvou em <b>OneDrive › … › TARS_Sync › do_celular</b>.'}<br><br>Marcar estes lançamentos como enviados?`,
+    [['x', 'Ainda não', 'ghost'], ['ok', 'Sim, enviados', 'primary']]);
+  if (r.k !== 'ok') return;
+  const t = Date.now(); sessao.d.enviados.push(...itens.map(i => ({ ...i, enviadoEm: t, pacoteId: id }))); sessao.d.enviados = sessao.d.enviados.slice(-500);
+  sessao.d.fila = sessao.d.fila.filter(i => !itens.includes(i)); sessao.d.pacotes.push(id);
+  salvar(); render(); toast('✓ Fila enviada. Importe no PC quando estiver lá.', 'pos');
+}
+
+/* =====================================================================
+   AJUSTES / AJUDA
+   ===================================================================== */
+const instalado = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+function vCfg() {
+  const r = R(), t = document.documentElement.getAttribute('data-theme');
+  return `<div class="card"><h3>👤 Perfil</h3><div class="mid">${esc(sessao.p.apelido || sessao.p.nome)}</div><div class="small muted">Humor do TARS: ${sessao.p.humor}% · ${r ? 'resumo de ' + new Date(r.geradoEm).toLocaleString('pt-BR').slice(0, 17) : 'sem resumo do PC'}</div>
+      <div class="acts"><label for="fRes" class="btn" onclick="resCtx='upd'">📂 Atualizar resumo</label><button class="btn" onclick="bloquear()">🔒 Bloquear</button></div></div>
+    <div class="card"><h3>🎨 Tema</h3><div class="seg" style="margin:0">${[['tars', 'TARS'], ['moderno', 'Moderno'], ['endurance', 'Endurance']].map(([k, l]) => `<button class="${t === k ? 'on' : ''}" onclick="setTema('${k}');render()">${l}</button>`).join('')}</div></div>
+    ${instalado() ? '' : `<div class="card"><h3>📲 Instalar na Tela de Início</h3><div class="small">Importante no iPhone: sem instalar, o Safari pode apagar os dados de sites pouco usados.</div><ol class="st"><li><b>iPhone:</b> Safari → <b>Compartilhar (□↑)</b> → <b>Adicionar à Tela de Início</b>.</li><li><b>Android:</b> Chrome → <b>⋮</b> → <b>Instalar app</b>.</li></ol></div>`}
+    <div class="card"><h3>❓ Ajuda</h3>
+      <div class="small"><b>Rotina sugerida</b></div><ol class="st"><li>No PC, uma vez por semana: <b>📱 → Gerar resumo</b> (pasta <b>para_celular</b>).</li><li>No celular: <b>📂 Atualizar resumo</b> e lance as despesas na hora, por foto ou digitando.</li><li><b>📦 Enviar pacote</b> para <b>do_celular</b> e, no PC, <b>📱 → Importar pacote</b>.</li></ol>
+      <div class="small"><b>Dicas para a foto</b></div><ol class="st"><li>Boa luz, cupom esticado e sem sombra.</li><li>Enquadre o cupom inteiro, principalmente a linha do <b>TOTAL</b> e o QR Code.</li><li>Confira sempre o valor: cupom térmico apagado engana o leitor.</li></ol>
+      <div class="small"><b>Privacidade</b></div><div class="small muted">A foto não é guardada nem enviada. O leitor de texto roda no próprio celular (baixa o programa na primeira vez). Resumo, fila e pacotes ficam criptografados com a sua senha.</div>
+      <div class="small" style="margin-top:8px"><b>OneDrive no app Arquivos</b></div><div class="small muted">Arquivos → Procurar → ⋯ → Editar → ative o OneDrive. Se o PC não sincronizar a pasta, confira no OneDrive do PC: ⚙️ Conta → Escolher pastas, e libere espaço se o plano estiver cheio.</div></div>
+    <div class="card"><h3>⚠ Zona de perigo</h3><button class="btn danger full" onclick="excluirPerfil()">🗑 Remover este perfil do celular</button><div class="small muted" style="margin-top:6px">Apaga só do celular (resumo e fila). ${sessao.d.fila.length ? `<b class="neg">Há ${sessao.d.fila.length} lançamento(s) não enviados.</b>` : ''}</div></div>
+    <div class="center small muted">TARS · Coletor v${VER}</div>`;
+}
+async function excluirPerfil() {
+  const r = await sheet('🗑 Remover perfil', `Remover <b>${esc(sessao.p.apelido || sessao.p.nome)}</b> deste celular? ${sessao.d.fila.length ? `<br><b class="neg">${sessao.d.fila.length} lançamento(s) da fila serão perdidos.</b>` : ''}`, [['x', 'Cancelar', 'ghost'], ['ok', 'Remover', 'danger']], );
+  if (r.k !== 'ok') return; const id = sessao.p.id; await _grav;
+  localStorage.removeItem(LS_D + id); salvarPerfis(perfis().filter(p => p.id !== id)); sessao = null; document.body.classList.add('locked'); lockUI = { etapa: 'auto' }; renderLock(); toast('Perfil removido', 'info');
+}
+
+/* ---------- boas-vindas do TARS ---------- */
+const FR = [['{s}, {n}. Coletor online. Pronto para registrar.', '{s}, {n}. Acesso autorizado.'],
+  ['{s}, {n}! Ranger pronta para a missão.', '{s}, {n}! Câmera calibrada, é só fotografar o cupom.', '{s}, {n}! Coletor online: nenhum cupom escapa.'],
+  ['{s}, {n}! Humor em {h}%: mostra o cupom que eu digo quanto doeu.', '{s}, {n}! A Ranger decolou. A nave-mãe agradece cada lançamento.', '{s}, {n}! Fotografa o cupom antes que ele desbote: papel térmico não perdoa.', '{s}, {n}! Pronto para registrar. O pinhão também conta como receita, viu?']];
+function boasVindas() {
+  const p = sessao.p, hum = +p.humor || 0, nv = hum <= 30 ? 0 : hum <= 70 ? 1 : 2, hr = new Date().getHours();
+  const s = hr >= 5 && hr < 12 ? 'Bom dia' : hr < 18 && hr >= 12 ? 'Boa tarde' : 'Boa noite', n = p.apelido || String(p.nome).split(' ')[0];
+  const msg = FR[nv][Math.floor(Math.random() * FR[nv].length)].replace('{s}', s).replace('{n}', n).replace('{h}', hum);
+  const r = R(), ins = [];
+  if (!r) ins.push(['warn', 'Sem resumo do PC: abra o tars_resumo para ver saldos e alertas.']);
+  else {
+    if (idadeResumoH(r) > 72) ins.push(['warn', `Resumo com ${Math.floor(idadeResumoH(r) / 24)} dias: gere outro no PC.`]);
+    if (r.alertas.length) ins.push(['neg', `${r.alertas.length} conta(s) em alerta de saldo nos próximos 30 dias.`]);
+    const v = r.pendencias.filter(x => x.data < hoje()).length; if (v) ins.push(['neg', `${v} conta(s) vencida(s) aguardando confirmação.`]);
+    if (!r.alertas.length && !v) ins.push(['pos', 'Nenhum alerta de saldo. Céu limpo.']);
+  }
+  if (sessao.d.fila.length) ins.push(['info', `${sessao.d.fila.length} lançamento(s) na fila para enviar ao PC.`]);
+  $id('sheetBox').innerHTML = `<div class="row" style="margin-bottom:10px"><span class="logo">◢ TARS</span><span class="small muted">humor ${hum}%</span></div><div class="tmsg" id="tm"></div>
+    <div id="tins" style="opacity:0;transition:opacity .4s;margin-top:10px">${ins.map(([c, t]) => `<div class="al ${c}">${esc(t)}</div>`).join('')}</div>
+    <div class="acts"><button class="btn primary" onclick="fecharSheet()">Vamos lá 🚀</button></div>`;
+  $id('sheet').classList.remove('hidden');
+  let k = 0; const el = $id('tm'), tm = setInterval(() => { k++; if (!el.isConnected) return clearInterval(tm); el.innerHTML = esc(msg.slice(0, k)) + '<span class="cur"></span>'; if (k >= msg.length) { clearInterval(tm); el.textContent = msg; $id('tins').style.opacity = 1; } }, 22);
+}
+
+/* =====================================================================
+   INICIALIZAÇÃO
+   ===================================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  setTema(localStorage.getItem(LS_T) || 'tars');
+  renderLock();
+  ['touchstart', 'mousedown', 'keydown', 'scroll'].forEach(ev => document.addEventListener(ev, () => { ultimaAtiv = Date.now(); }, { passive: true }));
+  setInterval(() => { if (sessao && Date.now() - ultimaAtiv > BLOQ_MIN * 60000) bloquear(`🔒 Bloqueado após ${BLOQ_MIN} min sem uso`); }, 15000);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) ocultoEm = Date.now(); else if (sessao && ocultoEm && Date.now() - ocultoEm > BG_LOCK_S * 1000) bloquear('🔒 Bloqueado ao voltar para o app'); });
+  document.addEventListener('keydown', e => { if (e.key === 'Enter' && !sessao && e.target.closest && e.target.closest('#lockBox')) { const b = $id('lockBox').querySelector('[data-enter]'); if (b && !b.disabled) { e.preventDefault(); b.click(); } } });
+  $id('sheet').addEventListener('click', e => { if (e.target.id === 'sheet') { fecharSheet(); _sheetRes && _sheetRes({ k: 'x' }); } });
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(e => console.warn(e));
+});
 </script>
 </body>
 </html>
